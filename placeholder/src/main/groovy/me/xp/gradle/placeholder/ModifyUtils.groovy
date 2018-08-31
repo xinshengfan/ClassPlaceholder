@@ -139,7 +139,7 @@ class ModifyUtils {
             if (!isOnlyVisit) {
                 modifyMap.each { k, v ->
                     def matchValue = "\${$k}"
-                    println "matchValue = $matchValue , name = $value --> ${matchValue == value}"
+                    println "matchValue = $matchValue , value = $value --> ${matchValue == value}"
                     if (matchValue == value) {
                         println " ++++++++++++  find $k replace $v +++++++++++++"
                         value = v

@@ -5,21 +5,22 @@ apply plugin: 'placeholder'
 placeholders {
     addholder {
         isModifyJava = true
-        classFile = "me/xp/gradle/classplaceholder/G.java"
-        values =
-                ['className'     : 'CustomUrls',
-                 'propertiesFile': 'config/ciTestEnv.properties',
-                 'jsonFile'      : 'json file ']
+        classFile = "me/xp/gradle/classplaceholder/AppConfig.java"
+        values = ['public' : 'AppConfigPubic',
+                  'private': 'AppConfigPrivate',
+                  'field'  : 'AppConfigField']
     }
     addholder {
         isModifyJava = false
-        classFile = "com/shishike/mobile/commonlib/config/Urls.class"
-        values =
-                ['className'     : 'CustomUrls',
-                 'propertiesFile': 'config/ciTestEnv.properties',
-                 'jsonFile'      : 'json file ']
+        classFile = "me/xp/gradle/jarlibrary/JarConfig.class"
+        values = ['config': 'JarConfigPubic']
     }
 
+    addholder {
+        isModifyJava = true
+        classFile = "me/xp/gradle/library/AarConfig.class"
+        values = ['config': 'AarConfig222']
+    }
 
 }
 
@@ -41,11 +42,31 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs' //aar dir
+    }
+}
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support.constraint:constraint-layout:1.1.2'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
+//    implementation name: 'library-release', ext: 'aar'
+    implementation project(":library")
+}
+
+task("modues") << {
+
+    def allprojects = project.parent.allprojects
+    println "allprojects = ${allprojects.size()}"
+    project.parent.allprojects { p ->
+        println "p = $p -- ${p.rootDir.absolutePath} -- ${p.name} -- ${p.path}"
+
+    }
 }

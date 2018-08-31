@@ -51,7 +51,7 @@ class PlaceholderPlugin implements Plugin<Project> {
     }
 
     static void modifySourceFile(Project project, List<PlaceholderExtension> placeholders) {
-        project.allprojects {
+        project.parent.allprojects { p ->
             placeholders.each { placeholder ->
                 if (!placeholder.isModifyJava) return
                 def map = placeholder.values
@@ -62,12 +62,17 @@ class PlaceholderPlugin implements Plugin<Project> {
                     def className = Utils.classFileNameWithJava(placeholder)
                     println "dir = [$dir], className = [$className]"
                     def f = dir + "/" + className
-                    ant.replace(
-                            file: f,
-                            token: matchKey,
-                            value: v
-                    ) {
-                        fileset(dir: dir, includes: className)
+                    def filPath = p.rootDir.absolutePath + "/" + p.name + "/" + f
+                    println "filPath = $filPath + ${p.name}"
+                    if (new File(filPath).exists()) {
+                        println "replace filPath = $filPath"
+                        ant.replace(
+                                file: filPath,
+                                token: matchKey,
+                                value: v
+                        ) {
+                            fileset(dir: dir, includes: className)
+                        }
                     }
 
                 }

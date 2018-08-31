@@ -118,14 +118,13 @@ class ClassPlaceholderTransform extends Transform {
                 //生成输出路径
                 def dest = outputProvider.getContentLocation(jarName + md5Name,
                         jarInput.contentTypes, jarInput.scopes, Format.JAR)
-                println "jarInput.file.absolutePath = $jarInput.file.absolutePath"
                 def modifyJarFile = InjectUtils.replaceInJar(transformInvocation.context, jarInput.file)
                 if (modifyJarFile == null) {
                     modifyJarFile = jarInput.file
 //                    println "modifyJarFile = ${modifyJarFile.absolutePath}"
                 } else {
                     //文件修改过
-                    println "jar 文件修改过  = ${modifyJarFile.absolutePath}"
+                    println "++++ jar modified  >> ${modifyJarFile.absolutePath}"
                     saveModifiedJarForCheck(modifyJarFile, jarInput.file)
                 }
 

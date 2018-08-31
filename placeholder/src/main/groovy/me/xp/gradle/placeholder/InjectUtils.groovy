@@ -82,12 +82,11 @@ class InjectUtils {
 
     static File replaceInJar(Context context, File file) {
         if (Utils.isNeedModifyJar(file)) {
-            println "需要修改jar file >> ${file.path}"
+            println "need modify jar file >> ${file.path}"
             return ModifyUtils.modifyJar(file, context.temporaryDir, true)
 
         }
         return null
     }
-
 
 }
