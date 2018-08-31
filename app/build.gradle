@@ -3,33 +3,17 @@ apply plugin: 'com.android.application'
 apply plugin: 'placeholder'
 
 placeholders {
-//    extensions = [[
-//                          isModifyJava: false,
-//                          classFile   : "me/xp/gradle/classplaceholder/G.class",
-//                          values      : ['className'     : 'CustomUrls',
-//                                         'propertiesFile': 'config/ciTestEnv.properties',
-//                                         'jsonFile'      : 'json file ']
-//                  ], [
-//                          isModifyJava: true,
-////    classFile = "com/shishike/mobile/commonlib/config/Urls.class"
-//                          classFile   : "me/xp/gradle/classplaceholder/G.class",
-//                          values      : ['className'     : 'CustomUrls',
-//                                         'propertiesFile': 'config/ciTestEnv.properties',
-//                                         'jsonFile'      : 'json file ']
-//                  ]]
-
-
     addholder {
-        isModifyJava = false
-        classFile = "me/xp/gradle/classplaceholder/G.class"
+        isModifyJava = true
+        classFile = "me/xp/gradle/classplaceholder/G.java"
         values =
                 ['className'     : 'CustomUrls',
                  'propertiesFile': 'config/ciTestEnv.properties',
                  'jsonFile'      : 'json file ']
     }
     addholder {
-        isModifyJava = true
-        classFile = "me/xp/gradle/classplaceholder/A.class"
+        isModifyJava = false
+        classFile = "com/shishike/mobile/commonlib/config/Urls.class"
         values =
                 ['className'     : 'CustomUrls',
                  'propertiesFile': 'config/ciTestEnv.properties',

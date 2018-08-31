@@ -6,8 +6,6 @@ import javassist.ClassPool
 import javassist.CtField
 import org.apache.commons.io.IOUtils
 
-import java.util.jar.JarFile
-
 /**
  * 查找并替换
  */
@@ -82,16 +80,9 @@ class InjectUtils {
 
     }
 
-    static File replaceInJar(Context context, File file, PlaceholderExtension extension) {
-        JarFile jarFile = new JarFile(file)
-        def filePath = file.absolutePath
-
-        //要替换的文件
-        def classFile = extension.getClassFile()
-        //要替换的值
-        def values = extension.getValues()
-        def jarEntry = jarFile.getJarEntry(classFile)
-        if (jarEntry != null) {
+    static File replaceInJar(Context context, File file) {
+        if (Utils.isNeedModifyJar(file)) {
+            println "需要修改jar file >> ${file.path}"
             return ModifyUtils.modifyJar(file, context.temporaryDir, true)
 
         }

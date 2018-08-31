@@ -19,6 +19,7 @@ buildscript {
 
 allprojects {
     repositories {
+        maven { url SNAPSHOT_REPOSITORY_URL }
         google()
         jcenter()
     }

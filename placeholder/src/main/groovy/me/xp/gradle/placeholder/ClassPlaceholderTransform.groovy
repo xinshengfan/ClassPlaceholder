@@ -70,54 +70,42 @@ class ClassPlaceholderTransform extends Transform {
                 File dir = dirInput.file
 //                File dir = null
                 if (dir) {
-                    HashMap<String, File> modifyMap = new HashMap<>();
+                    HashMap<String, File> modifyMap = new HashMap<>()
                     dir.traverse(type: FileType.FILES, nameFilter: ~/.*\.class/) {
                         File classFile ->
-                            println "classFile = ${classFile.absolutePath}"
-                            if (classFile.absolutePath.endsWith("G.class")) {
-                                File modified = InjectUtils.modifyClassFile(dir, classFile, transformInvocation.context.getTemporaryDir());
+                            def isNeedModify = Utils.isNeedModify(classFile.absolutePath)
+                            if (isNeedModify) {
+                                println " need modify class ${classFile.path}"
+                                File modified = InjectUtils.modifyClassFile(dir, classFile, transformInvocation.context.getTemporaryDir())
                                 if (modified != null) {
                                     //key为相对路径
-                                    modifyMap.put(classFile.absolutePath.replace(dir.absolutePath, ""), modified);
+                                    modifyMap.put(classFile.absolutePath.replace(dir.absolutePath, ""), modified)
                                 }
                             }
                     }
 
                     modifyMap.entrySet().each {
-                        Map.Entry<String, File> en ->
-                            File target = new File(dest.absolutePath + en.getKey());
-                            println "en --> ${en.key} target = $target"
+                        Map.Entry<String, File> entry ->
+                            File target = new File(dest.absolutePath + entry.getKey())
+                            println "entry --> ${entry.key} target = $target"
                             if (target.exists()) {
-                                target.delete();
+                                target.delete()
                             }
-                            FileUtils.copyFile(en.getValue(), target);
+                            FileUtils.copyFile(entry.getValue(), target)
                             println "dir = ${dir.absolutePath} "
 
-                            saveModifiedJarForCheck(en.getValue(), new File(dir.absolutePath + en.getKey()));
-                            en.getValue().delete();
+                            saveModifiedJarForCheck(entry.getValue(), new File(dir.absolutePath + entry.getKey()))
+                            entry.getValue().delete()
                     }
 
                 }
 
 //                InjectUtils.replaceInDir(transformInvocation.context, dirInput.file.absolutePath, replaceExtension)
 
-                FileUtils.copyDirectory(dirInput.file, dest);
-
                 // 将input的目录复制到output指定目录
-//                FileUtils.copyDirectory(dirInput.file, dest)
+                FileUtils.copyDirectory(dirInput.file, dest)
 
-//                modifyMap.entrySet().each {
-//                    Map.Entry<String, File> en ->
-//                        println "en = ${en.key} >> dest >>${dest.absolutePath}"
-//                        File target = new File(dest.absolutePath + en.getKey());
-//                        if (target.exists()) {
-//                            target.delete()
-//                        }
-//                        println "----- 修复之后的删除 >> en.getValue() : ${en.getValue()} , target = $target"
-//                        FileUtils.copyFile(en.getValue(), target)
-////                        saveModifiedJarForCheck(en.getValue(), target)
-//                        en.getValue().delete()
-//                }
+
             }
 
             input.jarInputs.each { JarInput jarInput ->
@@ -130,15 +118,14 @@ class ClassPlaceholderTransform extends Transform {
                 //生成输出路径
                 def dest = outputProvider.getContentLocation(jarName + md5Name,
                         jarInput.contentTypes, jarInput.scopes, Format.JAR)
-
-
-                def modifyJarFile = null
+                println "jarInput.file.absolutePath = $jarInput.file.absolutePath"
+                def modifyJarFile = InjectUtils.replaceInJar(transformInvocation.context, jarInput.file)
                 if (modifyJarFile == null) {
                     modifyJarFile = jarInput.file
 //                    println "modifyJarFile = ${modifyJarFile.absolutePath}"
                 } else {
                     //文件修改过
-                    println "文件修改过  = ${modifyJarFile.absolutePath}"
+                    println "jar 文件修改过  = ${modifyJarFile.absolutePath}"
                     saveModifiedJarForCheck(modifyJarFile, jarInput.file)
                 }
 

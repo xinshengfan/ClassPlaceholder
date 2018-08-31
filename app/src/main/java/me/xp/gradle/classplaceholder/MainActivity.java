@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
         StringBuilder sb = new StringBuilder();
         sb.append(Urls.URL_CLASS_NAME)
                 .append("\n")
+                .append(Urls.URL_PROPERTIES_FILE)
+                .append("\n")
                 .append(G.URL_JSON_FILE);
 
         System.out.println("sb = " + sb.toString());

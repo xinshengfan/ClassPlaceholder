@@ -42,7 +42,6 @@ class ModifyUtils {
             byte[] sourceClassBytes = IOUtils.toByteArray(inputStream)
             if (entryName.endsWith(".class")) {
                 className = entryName.replace(".class", "")
-                println " --- > className = $className"
                 modifiedClassBytes = modifyClasses(className, sourceClassBytes)
             }
             if (modifiedClassBytes == null) {
@@ -52,60 +51,49 @@ class ModifyUtils {
             }
             jarOutputStream.closeEntry()
         }
-//            Log.info("${hexName} is modified")
         jarOutputStream.close()
         file.close()
         return outputJar
     }
 
     static byte[] modifyClasses(String className, byte[] srcByteCode) {
-//        List<Map<String, Object>> methodMatchMaps = getList(container)
-        List<Map<String, Object>> methodMatchMaps = new ArrayList<>()
+        Map<String, String> modifyMap = Utils.modifyMap(className)
         byte[] classBytesCode = null
-//        if (methodMatchMaps) {
-        try {
-            println("--> start modifying ${className}")
-            classBytesCode = modifyClass(srcByteCode, methodMatchMaps)
-            println("--> revisit modified ${className}")
-            VisitClassMethod(classBytesCode, methodMatchMaps)
-            println("--> finish modifying ${className}")
-            return classBytesCode
-        } catch (Exception e) {
-            e.printStackTrace()
+        if (modifyMap) {
+            try {
+                println("--> start modifying ${className}")
+                classBytesCode = modifyClass(srcByteCode, modifyMap, false)
+                println("--> revisit modified ${className}")
+                modifyClass(srcByteCode, modifyMap, true)
+                println("--> finish modifying ${className}")
+                return classBytesCode
+            } catch (Exception e) {
+                e.printStackTrace()
+            }
         }
-//        }
         if (classBytesCode == null) {
             classBytesCode = srcByteCode
         }
         return classBytesCode
     }
 
-    static byte[] modifyClass(byte[] srcClass, List<Map<String, Object>> modifyMatchMaps) throws IOException {
+    static byte[] modifyClass(byte[] srcClass, Map<String, String> modifyMap, boolean isOnlyVisit) throws IOException {
         ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS)
-        ClassVisitor adapter = new ClassFilterVisitor(classWriter, modifyMatchMaps)
+        ClassVisitor adapter = new ClassFilterVisitor(classWriter, modifyMap)
+        adapter.isOnlyVisit = isOnlyVisit
         ClassReader cr = new ClassReader(srcClass)
         cr.accept(adapter, 0)
         return classWriter.toByteArray()
     }
 
-    static void VisitClassMethod(byte[] srcClass, List<Map<String, Object>> modifyMatchMaps) throws IOException {
-        ClassWriter classWriter = new ClassWriter(ClassWriter.COMPUTE_MAXS)
-        ClassFilterVisitor visitor = new ClassFilterVisitor(classWriter, modifyMatchMaps)
-        visitor.onlyVisit = true
-        ClassReader cr = new ClassReader(srcClass)
-        cr.accept(visitor, 0)
-    }
-
     static class ClassFilterVisitor extends ClassVisitor implements Opcodes {
-//        private String className
-        private List<Map<String, Object>> methodMatchMaps
-        public boolean onlyVisit = false
+        private Map<String, String> modifyMap
+        public boolean isOnlyVisit = false
 
         ClassFilterVisitor(
-                final ClassVisitor cv, List<Map<String, Object>> methodMatchMaps) {
+                final ClassVisitor cv, Map<String, String> modifyMap) {
             super(Opcodes.ASM5, cv)
-//            this.className = className
-            this.methodMatchMaps = methodMatchMaps
+            this.modifyMap = modifyMap
         }
 
         @Override
@@ -148,13 +136,15 @@ class ModifyUtils {
         @Override
         FieldVisitor visitField(int access, String name, String desc, String signature, Object value) {
             println('* visitField *' + " , " + access + " , " + name + " , " + desc + " , " + signature + " , " + value)
-            if ("URL_CLASS_NAME" == name) {
-                println " ++++++++++++  找到了 要替换了 +++++++++++++"
-                value = "TEST_URL"
-            }
-            if ("URL_JSON_FILE" == name) {
-                println " ++++++++++++  找到了 要替换了 URL_JSON_FILE+++++++++++++"
-                value = "testJsonFile"
+            if (!isOnlyVisit) {
+                modifyMap.each { k, v ->
+                    def matchValue = "\${$k}"
+                    println "matchValue = $matchValue , name = $value --> ${matchValue == value}"
+                    if (matchValue == value) {
+                        println " ++++++++++++  find $k replace $v +++++++++++++"
+                        value = v
+                    }
+                }
             }
             return super.visitField(access, name, desc, signature, value)
         }
@@ -169,9 +159,7 @@ class ModifyUtils {
         @Override
         public MethodVisitor visitMethod(int access, String name,
                                          String desc, String signature, String[] exceptions) {
-            if (!onlyVisit) {
-                println("* visitMethod *" + " , " + access + " , " + name + " , " + desc + " , " + signature + " , " + exceptions)
-            }
+            println("* visitMethod *" + " , " + access + " , " + name + " , " + desc + " , " + signature + " , " + exceptions)
             super.visitMethod(access, name, desc, signature, exceptions)
         }
 

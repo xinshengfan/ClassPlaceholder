@@ -23,7 +23,8 @@ class PlaceholderPlugin implements Plugin<Project> {
                 println "not add place holder extension!!!"
                 return
             }
-            println "holders = ${holders.toString()} --> ${holders.placeholders}"
+            ExtensionManager.instance().cacheExtensions(holders.placeholders)
+//            println "holders = ${holders.toString()} --> ${holders.placeholders}"
 
             //获取到scope,作用域
             def variantData = variant.variantData
@@ -52,6 +53,7 @@ class PlaceholderPlugin implements Plugin<Project> {
     static void modifySourceFile(Project project, List<PlaceholderExtension> placeholders) {
         project.allprojects {
             placeholders.each { placeholder ->
+                if (!placeholder.isModifyJava) return
                 def map = placeholder.values
                 map.each { k, v ->
                     def matchKey = String.format("\${%s}", k)
