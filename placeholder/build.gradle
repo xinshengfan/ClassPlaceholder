@@ -1,0 +1,24 @@
+apply plugin: 'groovy'
+
+apply from: rootProject.file("gradle/nexusJarUpload.gradle")
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation localGroovy()
+    implementation gradleApi()
+    implementation 'com.android.tools.build:gradle:3.1.4'
+    implementation 'com.android.tools.build:gradle-api:3.1.4'
+    implementation 'org.javassist:javassist:3.20.0-GA'
+}
