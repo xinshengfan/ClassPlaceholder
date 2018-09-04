@@ -1,6 +1,17 @@
 apply plugin: 'groovy'
 
-apply from: rootProject.file("gradle/nexusJarUpload.gradle")
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.gradle.publish:plugin-publish-plugin:0.10.0"
+    }
+}
+
+apply plugin: "com.gradle.plugin-publish"
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -21,4 +32,23 @@ dependencies {
     implementation 'com.android.tools.build:gradle:3.1.4'
     implementation 'com.android.tools.build:gradle-api:3.1.4'
     implementation 'org.javassist:javassist:3.20.0-GA'
+}
+
+version = "1.0.0"
+group = "me.xp.gradle"
+
+// The configuration example below shows the minimum required properties
+// configured to publish your plugin to the plugin portal
+pluginBundle {
+    website = 'https://github.com/xinshengfan/ClassPlaceholder'
+    vcsUrl = 'https://github.com/xinshengfan/ClassPlaceholder.git'
+    description = 'A plugin to dynamic replace jar and java file by placeholder string'
+    tags = ['jar', 'java', 'replace', 'dynamic', 'placeholder']
+
+    plugins {
+        greetingsPlugin {
+            id = 'me.xp.gradle.placeholder.PlaceholderPlugin'
+            displayName = 'placeholders'
+        }
+    }
 }
