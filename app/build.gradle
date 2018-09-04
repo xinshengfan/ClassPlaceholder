@@ -1,5 +1,14 @@
 apply plugin: 'com.android.application'
 
+buildscript {
+    repositories {
+        maven { url SNAPSHOT_REPOSITORY_URL }
+    }
+    dependencies {
+        classpath 'me.xp.gradle:placeholder:1.0.0'
+    }
+}
+
 apply plugin: 'placeholder'
 
 placeholders {
