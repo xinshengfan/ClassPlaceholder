@@ -4,8 +4,11 @@ apply plugin: 'placeholder'
 
 placeholders {
     addholder {
+        //is modify source java file
         isModifyJava = true
+        //modify file name
         classFile = "me/xp/gradle/classplaceholder/AppConfig.java"
+        //replace name and value
         values = ['public' : 'AppConfigPubic',
                   'private': 'AppConfigPrivate',
                   'field'  : 'AppConfigField']

@@ -1,9 +1,9 @@
 package me.xp.gradle.classplaceholder;
 
 public class AppConfig {
-    public static final String TEST_PUBLIC = "AppConfigPubic";
-    private static final String TEST_PRIVATE = "AppConfigPrivate";
-    private String TEST_FEILD = "AppConfigField";
+    public static final String TEST_PUBLIC = "${public}";
+    private static final String TEST_PRIVATE = "${private}";
+    private String TEST_FEILD = "${field}";
     private String field = "field";
 
 
