@@ -10,7 +10,7 @@
         allprojects {
             repositories {
         	...
-        	maven { url 'https://jitpack.io' }
+        	 maven { url 'https://plugins.gradle.org/m2/' }
         }
         }
     ```
@@ -20,7 +20,7 @@
          dependencies {
                 classpath 'com.android.tools.build:gradle:3.1.4'
 
-                classpath 'com.github.xinshengfan:placeholder:1.0.0-SNAPSHOT'
+                classpath 'gradle.plugin.me.xp.gradle:placeholder:1.0.1'
 
                 // NOTE: Do not place your application dependencies here; they belong
                 // in the individual module build.gradle files
@@ -35,7 +35,7 @@
 
 4. 在主项目的build.gradle文件中添加`placeholder`插件，定义在替换的值及文件名，如：
     ```
-        apply plugin: 'placeholder'
+        apply plugin: 'me.xp.gradle.placeholder.PlaceholderPlugin'
 
         placeholders {
             addholder {

@@ -34,7 +34,7 @@ dependencies {
     implementation 'org.javassist:javassist:3.20.0-GA'
 }
 
-version = "1.0.0"
+version = "1.0.1"
 group = "me.xp.gradle"
 
 // The configuration example below shows the minimum required properties
